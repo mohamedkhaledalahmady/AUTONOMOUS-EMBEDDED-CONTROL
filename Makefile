@@ -1,13 +1,13 @@
 MCU_name := atmega32			# arduino --> atmega328p
 frquency := 8000000UL
-src_file := main.c GPIO.c LCD.c
+src_file := main.c GPIO.c LCD.c UART.c
 project_name := application
 programmer := usbasp
 MCU_code := m328p
 CC := avr-gcc
 CC_Format := avr-objcopy
 CC_Size := avr-size
-
+CC_Flags := -w -O0 
 default: compile
 
 all:
@@ -21,7 +21,7 @@ burn: compile
 
 compile:
 	@echo "Starting compiling"
-	@$(CC) -w -O0 -mmcu=$(MCU_name) -DF_CPU=$(frquency) $(src_file) -o $(project_name).o
+	@$(CC) $(CC_Flags) -mmcu=$(MCU_name) -DF_CPU=$(frquency) $(src_file) -o $(project_name).o
 	@$(CC_Format) -O ihex $(project_name).o $(project_name).hex
 	@echo "size of program"
 	@$(CC_Size) --format=avr --mcu=$(MCU_name)  $(project_name).o
