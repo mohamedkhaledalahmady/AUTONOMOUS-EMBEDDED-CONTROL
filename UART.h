@@ -3,7 +3,7 @@
 #include "data_types.h"
 #include <avr\io.h>
 
-#define F_CPU 8000000
+#define F_CPU 8000000UL
 #define BAUD_RATE 9600
 
 void UART_Init();
