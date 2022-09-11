@@ -6,12 +6,12 @@
 #include "math.h"
 #include <string.h>
 
-#define NEWLINE 13
 #define delay 1000
 #define Success 1
 #define Fail 0
 #define Data_Frame_Length 8
 #define BACKSPACE 8
+#define NEWLINE 13
 
 typedef struct DC_Motor
 {
@@ -53,6 +53,7 @@ uint8_t Filter_Data_Frame(uint8_t size, uint8_t receieved_array[], DC_Motor *dc_
             return Fail;
         dc_temp.direction = receieved_array[index];
 
+        stepper_temp.angle = 0;
         for (index = 4; index < Data_Frame_Length - 2; index++)
         {
             // 01
@@ -173,11 +174,11 @@ int main()
 
     // Display default data on LCD
     LCD_String("sp:50% dir: +00");
-
-    // Rotate_Right(3);
+    LCD_GO_TO(0, 1);
+    LCD_String("Time 00:00:00 AM");
+    
     while (1)
     {
-
         receieved_data = UART_Reciever();
         UART_Sender(receieved_data);
 
@@ -185,7 +186,10 @@ int main()
         {
             if (Filter_Data_Frame(i, receieved_array, &dc_Motor, &stepper_Motor) == Success)
             {
+                // UART_Sender(stepper_Motor.angle+'0');
+                // UART_Sender(NEWLINE);
                 // Transmit Data on virtual terminal
+
                 UART_Sender_String("1. DC Motor {");
                 uint8_t j = 0;
                 for (j = 0; j < 3; j++)
@@ -222,9 +226,9 @@ int main()
 
                 // Control Stepper Motor
                 if (stepper_Motor.direction == 'L')
-                    Rotate_Left(stepper_Motor.angle - '2');
+                    Rotate_Left(stepper_Motor.angle);
                 else if (stepper_Motor.direction == 'R')
-                    Rotate_Right(stepper_Motor.angle - '2');
+                    Rotate_Right(stepper_Motor.angle);
 
                 // Dispaly Data On LCD
                 LCD_Command(LCD_CLEAR);
@@ -239,6 +243,8 @@ int main()
                 stepper_Motor.direction == 'L' ? LCD_Data('-') : LCD_Data('+');
                 for (index = 4; index <= 5; index++)
                     LCD_Data(receieved_array[index]);
+                LCD_GO_TO(0, 1);
+                LCD_String("Time 00:00:00 AM");
             }
             else
             {
