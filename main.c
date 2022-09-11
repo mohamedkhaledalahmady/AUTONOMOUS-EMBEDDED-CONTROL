@@ -7,7 +7,7 @@
 #include <string.h>
 
 #define NEWLINE 13
-#define delay 100
+#define delay 1000
 #define Success 1
 #define Fail 0
 #define Data_Frame_Length 8
@@ -55,6 +55,7 @@ uint8_t Filter_Data_Frame(uint8_t size, uint8_t receieved_array[], DC_Motor *dc_
 
         for (index = 4; index < Data_Frame_Length - 2; index++)
         {
+            // 01
             if (receieved_array[index] >= '0' && receieved_array[index] <= '9') // must first 3 elements in data fram be numbers
                 stepper_temp.angle += (receieved_array[index] - '0') * pow(10, 5 - index);
             else
@@ -65,64 +66,80 @@ uint8_t Filter_Data_Frame(uint8_t size, uint8_t receieved_array[], DC_Motor *dc_
         stepper_temp.direction = receieved_array[index];
 
         // if everything is ok now change original structs
-        dc_motor->speed = dc_temp.speed;
-        dc_motor->direction = dc_temp.direction;
+        dc_motor->speed = dc_temp.speed;         // 0 : 100
+        dc_motor->direction = dc_temp.direction; // F or B
 
-        stepper_motor->angle = stepper_temp.angle;
-        stepper_motor->direction = stepper_temp.direction;
+        stepper_motor->angle = stepper_temp.angle;         // 0 : 45
+        stepper_motor->direction = stepper_temp.direction; // L or R
 
         return Success;
     }
     return Fail;
 }
 
-void Rotate_Left()
+void Rotate_Right(uint8_t no_of_steps)
 {
-    // CW 8 4 2 1
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A4, GPIO_LOW);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A5, GPIO_LOW);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A6, GPIO_LOW);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A7, GPIO_HIGH);
-    _delay_ms(delay);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A4, GPIO_LOW);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A5, GPIO_LOW);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A6, GPIO_HIGH);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A7, GPIO_LOW);
-    _delay_ms(delay);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A4, GPIO_LOW);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A5, GPIO_HIGH);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A6, GPIO_LOW);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A7, GPIO_LOW);
-    _delay_ms(delay);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A4, GPIO_HIGH);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A5, GPIO_LOW);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A6, GPIO_LOW);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A7, GPIO_LOW);
-    _delay_ms(delay);
+    // CW C 6 3 9
+    uint8_t step;
+    for (step = 0; step < no_of_steps; step++)
+    {
+        // 0xCx
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A4, GPIO_LOW);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A5, GPIO_LOW);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A6, GPIO_HIGH);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A7, GPIO_HIGH);
+        _delay_ms(delay);
+        // 0x6x
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A4, GPIO_LOW);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A5, GPIO_HIGH);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A6, GPIO_HIGH);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A7, GPIO_LOW);
+        _delay_ms(delay);
+        // 0x3x
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A4, GPIO_HIGH);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A5, GPIO_HIGH);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A6, GPIO_LOW);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A7, GPIO_LOW);
+        _delay_ms(delay);
+        // 0x9x
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A4, GPIO_HIGH);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A5, GPIO_LOW);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A6, GPIO_LOW);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A7, GPIO_HIGH);
+        _delay_ms(delay);
+    }
 }
-void Rotate_Right()
+void Rotate_Left(uint8_t no_of_steps)
 {
-    // CCW 1 2 4 8
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A4, GPIO_HIGH);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A5, GPIO_LOW);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A6, GPIO_LOW);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A7, GPIO_LOW);
-    _delay_ms(delay);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A4, GPIO_LOW);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A5, GPIO_HIGH);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A6, GPIO_LOW);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A7, GPIO_LOW);
-    _delay_ms(delay);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A4, GPIO_LOW);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A5, GPIO_LOW);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A6, GPIO_HIGH);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A7, GPIO_LOW);
-    _delay_ms(delay);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A4, GPIO_LOW);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A5, GPIO_LOW);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A6, GPIO_LOW);
-    GPIO_WritePin(GPIO_A, GPIO_PIN_A7, GPIO_HIGH);
-    _delay_ms(delay);
+    // C.C.W 3 6 C 9
+    uint8_t step;
+    for (step = 0; step < no_of_steps; step++)
+    {
+        // 0x3x
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A4, GPIO_HIGH);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A5, GPIO_HIGH);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A6, GPIO_LOW);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A7, GPIO_LOW);
+        _delay_ms(delay);
+        // 0x6x
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A4, GPIO_LOW);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A5, GPIO_HIGH);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A6, GPIO_HIGH);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A7, GPIO_LOW);
+        _delay_ms(delay);
+        // 0xCx
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A4, GPIO_LOW);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A5, GPIO_LOW);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A6, GPIO_HIGH);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A7, GPIO_HIGH);
+        _delay_ms(delay);
+        // 0x9x
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A4, GPIO_HIGH);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A5, GPIO_LOW);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A6, GPIO_LOW);
+        GPIO_WritePin(GPIO_A, GPIO_PIN_A7, GPIO_HIGH);
+        _delay_ms(delay);
+    }
 }
 
 int main()
@@ -157,24 +174,35 @@ int main()
     // Display default data on LCD
     LCD_String("sp:50% dir: +00");
 
+    // Rotate_Right(3);
     while (1)
     {
+
         receieved_data = UART_Reciever();
         UART_Sender(receieved_data);
 
         if (receieved_data == NEWLINE)
         {
-            UART_Sender_String("data received: ");
-            uint8_t test = 0;
-            for (test = 0; test < i; test++)
-                UART_Sender(receieved_array[test]);
-            UART_Sender_String("  ");
-            UART_Sender_String("len: ");
-            UART_Sender(i + '0');
-            UART_Sender(NEWLINE);
-
             if (Filter_Data_Frame(i, receieved_array, &dc_Motor, &stepper_Motor) == Success)
             {
+                // Transmit Data on virtual terminal
+                UART_Sender_String("1. DC Motor {");
+                uint8_t j = 0;
+                for (j = 0; j < 3; j++)
+                    UART_Sender(receieved_array[j]);
+                UART_Sender('%');
+                UART_Sender_String(" , ");
+                UART_Sender(receieved_array[3]);
+                UART_Sender_String("}");
+                UART_Sender(NEWLINE);
+                UART_Sender_String("2. Stepper Motor {");
+                for (j = 4; j < 6; j++)
+                    UART_Sender(receieved_array[j]);
+                UART_Sender_String(" , ");
+                UART_Sender(receieved_array[6]);
+                UART_Sender_String("}");
+                UART_Sender(NEWLINE);
+
                 // indecation leds
                 GPIO_WritePin(GPIO_D, GPIO_PIN_D6, GPIO_HIGH);
                 GPIO_WritePin(GPIO_D, GPIO_PIN_D7, GPIO_LOW);
@@ -194,9 +222,9 @@ int main()
 
                 // Control Stepper Motor
                 if (stepper_Motor.direction == 'L')
-                    Rotate_Left();
+                    Rotate_Left(stepper_Motor.angle - '2');
                 else if (stepper_Motor.direction == 'R')
-                    Rotate_Right();
+                    Rotate_Right(stepper_Motor.angle - '2');
 
                 // Dispaly Data On LCD
                 LCD_Command(LCD_CLEAR);
@@ -218,15 +246,13 @@ int main()
                 GPIO_WritePin(GPIO_D, GPIO_PIN_D6, GPIO_LOW);
                 GPIO_WritePin(GPIO_D, GPIO_PIN_D7, GPIO_HIGH);
                 // Error Message
-                UART_Sender_String("Invalid Data Fomrat use this format (XXXAYYBE)");
+                UART_Sender_String("Invalid Data Format use this format (XXXAYYBE)");
                 UART_Sender(NEWLINE);
             }
 
             i = 0;
             receieved_array[Data_Frame_Length - 1] = 'N';
         }
-        // else if (receieved_data == BACKSPACE)
-        // i = i;
         else
         {
             receieved_array[i] = receieved_data;
