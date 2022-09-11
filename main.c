@@ -32,13 +32,13 @@ uint8_t str_len(uint8_t *string)
         count++;
     return count;
 }
-uint8_t Filter_Data_Frame(uint8_t receieved_array[], DC_Motor *dc_motor, Stepper_Motor *stepper_motor)
+uint8_t Filter_Data_Frame(uint8_t size, uint8_t receieved_array[], DC_Motor *dc_motor, Stepper_Motor *stepper_motor)
 {
     uint8_t receieved_speed;
     DC_Motor dc_temp;
     Stepper_Motor stepper_temp;
 
-    if (str_len(receieved_array) == Data_Frame_Length && receieved_array[Data_Frame_Length - 1] == 'E')
+    if (size == Data_Frame_Length && receieved_array[Data_Frame_Length - 1] == 'E')
     {
         uint8_t index;
         dc_temp.speed = 0;
@@ -49,6 +49,8 @@ uint8_t Filter_Data_Frame(uint8_t receieved_array[], DC_Motor *dc_motor, Stepper
             else
                 return Fail;
         }
+        if (receieved_array[index] != 'F' && receieved_array[index] != 'B')
+            return Fail;
         dc_temp.direction = receieved_array[index];
 
         for (index = 4; index < Data_Frame_Length - 2; index++)
@@ -58,6 +60,8 @@ uint8_t Filter_Data_Frame(uint8_t receieved_array[], DC_Motor *dc_motor, Stepper
             else
                 return Fail;
         }
+        if (receieved_array[index] != 'L' && receieved_array[index] != 'R')
+            return Fail;
         stepper_temp.direction = receieved_array[index];
 
         // if everything is ok now change original structs
@@ -120,9 +124,9 @@ void Rotate_Right()
     GPIO_WritePin(GPIO_A, GPIO_PIN_A7, GPIO_HIGH);
     _delay_ms(delay);
 }
+
 int main()
 {
-
     DDRB |= 1 << PIN3;
     TCCR0 = 0x62; // configuration for timer 0 in PWM phase control mode, non inverting, clk/8
 
@@ -160,7 +164,16 @@ int main()
 
         if (receieved_data == NEWLINE)
         {
-            if (Filter_Data_Frame(receieved_array, &dc_Motor, &stepper_Motor) == Success)
+            UART_Sender_String("data received: ");
+            uint8_t test = 0;
+            for (test = 0; test < i; test++)
+                UART_Sender(receieved_array[test]);
+            UART_Sender_String("  ");
+            UART_Sender_String("len: ");
+            UART_Sender(i + '0');
+            UART_Sender(NEWLINE);
+
+            if (Filter_Data_Frame(i, receieved_array, &dc_Motor, &stepper_Motor) == Success)
             {
                 // indecation leds
                 GPIO_WritePin(GPIO_D, GPIO_PIN_D6, GPIO_HIGH);
@@ -204,12 +217,16 @@ int main()
                 // indecation leds
                 GPIO_WritePin(GPIO_D, GPIO_PIN_D6, GPIO_LOW);
                 GPIO_WritePin(GPIO_D, GPIO_PIN_D7, GPIO_HIGH);
+                // Error Message
+                UART_Sender_String("Invalid Data Fomrat use this format (XXXAYYBE)");
+                UART_Sender(NEWLINE);
             }
+
             i = 0;
             receieved_array[Data_Frame_Length - 1] = 'N';
         }
-        else if (receieved_data == BACKSPACE)
-            i = i;
+        // else if (receieved_data == BACKSPACE)
+        // i = i;
         else
         {
             receieved_array[i] = receieved_data;
