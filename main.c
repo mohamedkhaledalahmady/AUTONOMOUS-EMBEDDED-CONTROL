@@ -206,15 +206,25 @@ int main()
                 GPIO_WritePin(GPIO_D, GPIO_PIN_D7, GPIO_HIGH);
             }
             i = 0;
+<<<<<<< HEAD
             receieved_array[Data_Frame_Length - 1] = 'N';
+=======
+>>>>>>> d2b9b362ff18b9d1eb5aa5e638e27a56eb367a0a
         }
         else if (receieved_data == BACKSPACE)
             i = i;
         else
         {
             receieved_array[i] = receieved_data;
+<<<<<<< HEAD
             i = i > 10 ? 0 : i + 1;
         }
+=======
+            i++;
+        }
+        if (i > 10)
+            i = 0;
+>>>>>>> d2b9b362ff18b9d1eb5aa5e638e27a56eb367a0a
     }
 
     return 0;
