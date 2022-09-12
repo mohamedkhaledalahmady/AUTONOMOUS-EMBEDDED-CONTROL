@@ -70,7 +70,6 @@ uint8_t Filter_Data_Frame(uint8_t size, uint8_t receieved_array[], DC_Motor *dc_
         }
         else
         {
-
             stepper_temp.angle = (receieved_array[4] - '0') * pow(10, 1);
             stepper_temp.angle += (receieved_array[5] - '0');
         }
