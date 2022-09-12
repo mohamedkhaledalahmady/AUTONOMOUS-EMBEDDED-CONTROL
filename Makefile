@@ -1,4 +1,4 @@
-MCU_name := atmega32			# arduino --> atmega328p
+MCU_name := atmega32		
 frquency := 8000000UL
 src_file := main.c GPIO.c LCD.c UART.c
 project_name := application
@@ -8,6 +8,7 @@ CC := avr-gcc
 CC_Format := avr-objcopy
 CC_Size := avr-size
 CC_Flags := -w -O0 
+
 default: compile
 
 all:

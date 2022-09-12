@@ -13,7 +13,7 @@ void LCD_Init()
         GPIO_ALL_PORT_OUTPUT(LCD_DATA_PORT);
         // commands to tell LCD that we will use 8 bit mode
         LCD_Command(LCD_8_MODE);
-        LCD_Command(LCD_DISPLAY_ON_CURSOR_BLINKING);
+        LCD_Command(LCD_DISPLAY_ON_CURSOR_OFF);
         LCD_Command(LCD_CLEAR);
     }
     else if (LCD_Select_Mode == LCD_4_MODE)
@@ -23,7 +23,7 @@ void LCD_Init()
         LCD_Command(0x33);
         LCD_Command(0x32);
         LCD_Command(LCD_4_MODE);
-        LCD_Command(LCD_DISPLAY_ON_CURSOR_BLINKING);
+        LCD_Command(LCD_DISPLAY_ON_CURSOR_OFF);
         LCD_Command(LCD_CLEAR);
     }
     _delay_ms(2);
@@ -125,7 +125,7 @@ void LCD_String(unit8 *string)
     while (string[index])
     {
         LCD_Data(string[index]);
-        _delay_ms(1);
+        _delay_us(1);
         index++;
     }
 }
