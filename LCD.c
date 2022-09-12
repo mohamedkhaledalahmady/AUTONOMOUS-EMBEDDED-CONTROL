@@ -239,3 +239,22 @@ static void LCD_Define_Nipple_Output(uint8_t port)
         break;
     }
 }
+
+void LCD_Number(uint8_t num)
+{
+    uint8_t array[4];
+    uint8_t i = 0;
+    while (num)
+    {
+        array[i] = num % 10;
+        i++;
+        num /= 10;
+    }
+    int8_t j;
+    if (i == 1)
+        LCD_Data('0');
+    if (i == 0)
+        LCD_String("00");
+    for (j = i - 1; j >= 0; j--)
+        LCD_Data(array[j] + '0');
+}

@@ -5,7 +5,7 @@ void UART_Init()
     UCSRB |= 1 << TXEN | 1 << RXEN;                // Enable Transmite bit
     UCSRC |= 1 << UCSZ0 | 1 << UCSZ1 | 1 << URSEL; // 8 bit data
     UBRRL = F_CPU / BAUD_RATE / 16 - 1;            // set baud rate
-    // UCSRA |= 1 << U2X;                           // to double Boud Rate at same frequency
+    // UCSRA |= 1 << U2X;                          // to double Boud Rate at same frequency
 }
 void UART_Sender(unit8 data)
 {

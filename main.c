@@ -5,6 +5,7 @@
 #include "UART.h"
 #include "math.h"
 #include <string.h>
+#include <avr/interrupt.h>
 
 #define delay 1000
 #define Success 1
@@ -12,6 +13,8 @@
 #define Data_Frame_Length 8
 #define BACKSPACE 8
 #define NEWLINE 13
+
+uint8_t seconds, minuts, hours;
 
 typedef struct DC_Motor
 {
@@ -143,8 +146,38 @@ void Rotate_Left(uint8_t no_of_steps)
     }
 }
 
+ISR(TIMER1_OVF_vect)
+{
+    seconds++;
+    if (seconds > 59)
+    {
+        minuts++;
+        seconds = 0;
+    }
+    if (minuts > 59)
+    {
+        hours++;
+        minuts = 0;
+    }
+}
+
+void Diplay_Time()
+{
+    LCD_GO_TO(0, 1);
+    LCD_String("Time ");
+    LCD_Number(hours);
+    LCD_Data(':');
+    LCD_Number(minuts);
+    LCD_Data(':');
+    LCD_Number(seconds);
+    LCD_String(" AM");
+}
 int main()
 {
+    TCNT1 = 0x85EE;      // for delay 1 second
+    TIMSK |= 1 << TOIE1; // enable timer 1 overflow interrupt
+    TCCR1B = 0x04;       // for prescaler 256
+
     DDRB |= 1 << PIN3;
     TCCR0 = 0x62; // configuration for timer 0 in PWM phase control mode, non inverting, clk/8
 
@@ -176,9 +209,19 @@ int main()
     LCD_String("sp:50% dir: +00");
     LCD_GO_TO(0, 1);
     LCD_String("Time 00:00:00 AM");
-    
+
+    sei();
     while (1)
     {
+        // LCD_GO_TO(0, 1);
+        // LCD_String("Time ");
+        // LCD_Number(hours);
+        // LCD_Data(':');
+        // LCD_Number(minuts);
+        // LCD_Data(':');
+        // LCD_Number(seconds);
+        // LCD_String(" AM");
+
         receieved_data = UART_Reciever();
         UART_Sender(receieved_data);
 
@@ -207,6 +250,22 @@ int main()
                 UART_Sender_String("}");
                 UART_Sender(NEWLINE);
 
+                // Dispaly Data On LCD
+                LCD_Command(LCD_CLEAR);
+                LCD_String("sd:");
+                uint8_t index;
+                if (receieved_array[0] != '0')
+                    LCD_Data(receieved_array[0]);
+                for (index = 1; index <= 2; index++)
+                    LCD_Data(receieved_array[index]);
+                LCD_Data('%');
+                LCD_String(" dir: ");
+                stepper_Motor.direction == 'L' ? LCD_Data('-') : LCD_Data('+');
+                for (index = 4; index <= 5; index++)
+                    LCD_Data(receieved_array[index]);
+
+                Diplay_Time();
+
                 // indecation leds
                 GPIO_WritePin(GPIO_D, GPIO_PIN_D6, GPIO_HIGH);
                 GPIO_WritePin(GPIO_D, GPIO_PIN_D7, GPIO_LOW);
@@ -229,22 +288,6 @@ int main()
                     Rotate_Left(stepper_Motor.angle);
                 else if (stepper_Motor.direction == 'R')
                     Rotate_Right(stepper_Motor.angle);
-
-                // Dispaly Data On LCD
-                LCD_Command(LCD_CLEAR);
-                LCD_String("sd:");
-                uint8_t index;
-                if (receieved_array[0] != '0')
-                    LCD_Data(receieved_array[0]);
-                for (index = 1; index <= 2; index++)
-                    LCD_Data(receieved_array[index]);
-                LCD_Data('%');
-                LCD_String(" dir: ");
-                stepper_Motor.direction == 'L' ? LCD_Data('-') : LCD_Data('+');
-                for (index = 4; index <= 5; index++)
-                    LCD_Data(receieved_array[index]);
-                LCD_GO_TO(0, 1);
-                LCD_String("Time 00:00:00 AM");
             }
             else
             {
@@ -264,6 +307,7 @@ int main()
             receieved_array[i] = receieved_data;
             i = i > 10 ? 0 : i + 1;
         }
+        Diplay_Time();
     }
 
     return 0;

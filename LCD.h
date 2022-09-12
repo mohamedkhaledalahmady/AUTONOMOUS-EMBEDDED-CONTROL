@@ -37,4 +37,5 @@ void LCD_GO_TO(uint8_t, uint8_t);
 static void LCD_GET_Second_Nipple(uint8_t, uint8_t);
 static void LCD_GET_First_Nipple(uint8_t, uint8_t);
 static void LCD_Define_Nipple_Output(uint8_t);
+void LCD_Number(uint8_t);
 #endif
