@@ -27,6 +27,8 @@
 #define LCD_FIRTE_LINE 0x80
 #define LCD_SECOND_LINE 0xC0
 #define LCD_DISPLAY_ON_CURSOR_BLINKING 0x0E
+#define LCD_DISPLAY_ON_CURSOR_OFF 0x0C
+
 
 // Functions
 void LCD_Init();
