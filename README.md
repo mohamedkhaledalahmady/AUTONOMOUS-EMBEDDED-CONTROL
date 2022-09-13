@@ -24,6 +24,6 @@
 > ## _Setup_
   * Download all project files `git clone https://github.com/mohamedkhaledalahmady/AUTONOMOUS-EMBEDDED-CONTROL`
   * Open project in `VS Code` or any IDE.
-  * open termianl, just type `make compile` or 'make' only for compiling program
+  * open termianl, just type `make compile` or `make` only for compiling program
   * Now `hex` file is generated, you can use it for simulation
   * `make clean` to delete all objects files and executable file generated
