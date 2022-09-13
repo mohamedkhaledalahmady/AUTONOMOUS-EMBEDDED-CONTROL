@@ -16,7 +16,12 @@
 
 ![data frame](https://user-images.githubusercontent.com/67025780/189889596-feb53074-a8b8-40d1-a58f-cfca5498a2ce.PNG)
 
-> ## _Setup and running settings_
+> ## _Protues Simulation_
+
+![proteus](https://user-images.githubusercontent.com/67025780/189891336-032759d2-c7c5-4d39-addc-f5924a40d215.PNG)
+
+
+> ## _Setup_
   * Download all project files `git clone https://github.com/mohamedkhaledalahmady/AUTONOMOUS-EMBEDDED-CONTROL`
   * Open project in `VS Code` or any IDE.
   * open termianl, just type `make compile` or 'make' only for compiling program
