@@ -111,6 +111,7 @@ void Rotate_Right(uint8_t no_of_steps)
         order1 = order1 >= 3 ? 0 : order1 + 1;
         _delay_ms(delay);
     }
+    Diplay_Time();
 }
 
 void Rotate_Left(uint8_t no_of_steps)
@@ -125,6 +126,7 @@ void Rotate_Left(uint8_t no_of_steps)
         order2 = order2 >= 3 ? 0 : order2 + 1;
         _delay_ms(delay);
     }
+    Diplay_Time();
 }
 
 ISR(TIMER1_OVF_vect)
