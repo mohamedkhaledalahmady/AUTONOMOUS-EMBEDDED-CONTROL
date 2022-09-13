@@ -26,4 +26,4 @@
   * Open project in `VS Code` or any IDE.
   * open termianl, just type `make compile` or `make` only for compiling program
   * Now `hex` file is generated, you can use it for simulation
-  * `make clean` to delete all objects files and executable file generated
+  * `make clean` to delete all objects files and hex file generated
