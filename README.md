@@ -7,7 +7,7 @@
    * _Makefile_ : Makefile for running application `compile` `burn` `clean`
    
 > ## _Project Requirements_
-* `avr-gcc` as out tool chain for compiling
+* `avr-gcc` as our tool chain for compiling
 * `WinAVR`
 * `Protues` as simulator program
 
