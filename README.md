@@ -1,2 +1,23 @@
-# AUTONOMOUS-EMBEDDED-CONTROL
-Cairo University Eco-Racing Team Technical Test
+# _**AUTONOMOUS-EMBEDDED-CONTROL**_
+> ## _Project Description_:
+   * Thsi project related to Cairo University Eco-Racing Team Technical Test
+   * My task to implement embedded system that contain some of peripherals such as LCD, dc motoe, stepper motor and commmunication protocol. by using **UART-PC** to transfer data to **MCU** in specific format, then if this valid format MCU filter it and make decitions to control speed and direction of dc motor same for stepper but with angle and direction parameters.
+> ## _Contents_:
+   * _All project files_ (.h & .c)
+   * _Makefile_ : Makefile for running application `compile` `burn` `clean`
+   
+> ## _Project Requirements_
+* `avr-gcc` as out tool chain for compiling
+* `WinAVR`
+
+
+> ## _Project Flow_
+
+![data frame](https://user-images.githubusercontent.com/67025780/189889596-feb53074-a8b8-40d1-a58f-cfca5498a2ce.PNG)
+
+> ## _Setup and running settings_
+  * Download all project files `git clone https://github.com/mohamedkhaledalahmady/AUTONOMOUS-EMBEDDED-CONTROL`
+  * Open project in `VS Code` or any IDE.
+  * open termianl, just type `make compile` or 'make' only for compiling program
+  * Now `hex` file is generated, you can use it for simulation
+  * `make clean` to delete all objects files and executable file generated
