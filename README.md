@@ -5,7 +5,7 @@
 > ## _Contents_:
    * _All project files_ (.h & .c)
    * _Makefile_ : Makefile for running application `compile` `burn` `clean`
-   
+   * _Video Foldre_: explanation while simulation run
 > ## _Project Requirements_
 * `avr-gcc` as our tool chain for compiling
 * `WinAVR`
