@@ -1,7 +1,7 @@
 # _**AUTONOMOUS-EMBEDDED-CONTROL**_
 > ## _Project Description_:
    * This project related to Cairo University Eco-Racing team technical test
-   * My task to implement embedded system that contain some of peripherals such as LCD, dc motor, stepper motor and communication protocol. by using **UART-PC** to transfer data to **MCU** in specific format, then if this valid format MCU filter it and make decisions to control speed and direction of dc motor same for stepper but with angle and direction parameters.
+   * My task to implement embedded system project that contain some of peripherals such as LCD, dc motor, stepper motor and communication protocol. by using **UART-PC** to transfer data to **MCU** in specific format, then if this valid format MCU filter it and make decisions to control speed and direction of dc motor same for stepper but with angle and direction parameters.
 > ## _Contents_:
    * _All project files_ (.h & .c)
    * _Makefile_ : Makefile for running application `compile` `burn` `clean`
